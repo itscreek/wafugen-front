@@ -10,6 +10,7 @@ const rootDir = resolve(__dirname);
 const srcDir = resolve(rootDir, 'src');
 const pagesDir = resolve(srcDir, 'pages');
 const assetsDir = resolve(srcDir, 'assets');
+const hooksDir = resolve(srcDir, 'hooks');
 const outDir = resolve(rootDir, 'dist');
 const publicDir = resolve(rootDir, 'public');
 
@@ -26,6 +27,7 @@ export default defineConfig({
       '@src': srcDir,
       '@assets': assetsDir,
       '@pages': pagesDir,
+      '@hooks': hooksDir,
     },
   },
   plugins: [
