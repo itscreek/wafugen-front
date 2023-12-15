@@ -1,6 +1,3 @@
-import axios from 'axios';
-
-// Define types for API
 export interface TsuriScore {
   status: string;
   video_id: string;
@@ -18,25 +15,17 @@ export interface TsuriScoreAPIResponse {
 
 const API_URL = 'http://localhost:40000/v1';
 
-const instance = axios.create({
-  baseURL: API_URL,
-  timeout: 1000,
-  headers: {
-    'Access-Control-Allow-Origin': API_URL,
-  },
-});
-
-// API call functionß
+// API call function
 export const tsuriScoreAPICall = async (input: TsuriScoreAPIRequest): Promise<TsuriScoreAPIResponse> => {
   const inputVideoIds = input.video_ids.join(',');
-  try {
-    const response = await instance.get(`/report?video_id=${inputVideoIds}`);
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      return error.response.data;
-    } else {
-      throw error;
-    }
+  const url = `${API_URL}/report?video_id=${inputVideoIds}`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    // TODO: Error handling
+    throw new Error(`HTTP error! Status: ${response.status}`);
   }
+
+  return await response.json();
 };
