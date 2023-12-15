@@ -21,12 +21,11 @@ document.addEventListener('mouseover', event => {
   }
   const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
   const videoId = thumbnailAnchor.href.split('v=')[1];
-  const thumbnailRect = thumbnailAnchor.getBoundingClientRect();
 
-  injectTsuriScore(videoId, thumbnailRect);
+  injectTsuriScore(videoId);
 });
 
-const injectTsuriScore = async (videoId: string, rect: DOMRect) => {
+const injectTsuriScore = async (videoId: string) => {
   const tsuriScore = await getTsuriScore(videoId);
   console.log(tsuriScore);
 
