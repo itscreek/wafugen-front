@@ -25,12 +25,15 @@ document.addEventListener('mouseover', event => {
     injectTsuriScore(videoId, thumbnailAnchor);
   }
 
-  //カーソルから外れたら、スコアを表示しなくなる
-  const element = target.parentElement.parentElement as HTMLElement;
-  const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
-  if (scoreElement) {
-    scoreElement.remove();
+  // when target is Youtube video
+  if (target.className === 'video-stream html5-main-video') {
+    console.log('Mouseover!: video');
+    injectTsuriReportShape();
   }
+
+  removeTsuriReportShape();
+
+  removeTsuriScore(target);
 });
 
 const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElement) => {
@@ -38,6 +41,15 @@ const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElem
   console.log(tsuriScore);
 
   injectingUI(tsuriScore, thumbnailAnchor);
+};
+
+const removeTsuriScore = (target: HTMLElement) => {
+  //カーソルから外れたら、スコアを表示しなくなる
+  const element = target.parentElement.parentElement as HTMLElement;
+  const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
+  if (scoreElement) {
+    scoreElement.remove();
+  }
 };
 
 const getTsuriScore = async (videoId: string): Promise<number> => {
@@ -72,4 +84,12 @@ const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => 
   }
   // スコアを表示
   scoreElement.textContent = tsuriScore.toString();
+};
+
+const injectTsuriReportShape = () => {
+  // TODO
+};
+
+const removeTsuriReportShape = () => {
+  // TODO
 };
