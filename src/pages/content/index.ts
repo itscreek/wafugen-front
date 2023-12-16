@@ -10,6 +10,7 @@
 
 import { TsuriScoreRequestMessage, TsuriScoreResponseMessage } from '@pages/message';
 
+/*
 document.addEventListener('mouseover', event => {
   const target = event.target as HTMLElement;
   if (
@@ -17,12 +18,36 @@ document.addEventListener('mouseover', event => {
     target.parentElement.parentElement.tagName !== 'A' ||
     target.parentElement.parentElement.id !== 'thumbnail'
   ) {
+    //aaa
     return;
   }
   const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
   const videoId = thumbnailAnchor.href.split('v=')[1];
 
   injectTsuriScore(videoId,thumbnailAnchor);
+});
+*/
+
+// マウスオーバー時の処理
+document.addEventListener('mouseover', event => {
+  const target = event.target as HTMLElement;
+  if (
+    target.tagName !== 'IMG' ||
+    target.parentElement.parentElement.tagName !== 'A' ||
+    target.parentElement.parentElement.id !== 'thumbnail'
+  ) {
+    const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
+    const scoreElement = thumbnailAnchor.querySelector('.tsuri-score') as HTMLElement | null;
+    if (scoreElement) {
+      // スコア要素を非表示にするか削除する
+      scoreElement.remove();
+    }
+    return;
+  }
+  const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
+  const videoId = thumbnailAnchor.href.split('v=')[1];
+
+  injectTsuriScore(videoId, thumbnailAnchor);
 });
 
 const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElement) => {
@@ -65,3 +90,21 @@ const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => 
   // スコアを表示
   scoreElement.textContent = tsuriScore.toString();
 };
+
+/*
+document.addEventListener('mouseout', event => {
+  const target = event.target as HTMLElement;
+  if (
+    target.tagName !== 'IMG' ||
+    target.parentElement.parentElement.tagName !== 'A' ||
+    target.parentElement.parentElement.id !== 'thumbnail'
+  ) {
+    return;
+  }
+  const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
+  const scoreElement = thumbnailAnchor.querySelector('.tsuri-score') as HTMLElement | null;
+  if (scoreElement) {
+    scoreElement.textContent = ''; // スコアをクリア
+  }
+});
+*/
