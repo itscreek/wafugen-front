@@ -15,14 +15,17 @@ document.addEventListener('mouseover', event => {
   const target = event.target as HTMLElement;
 
   // when target is Youtube thumbnail
-  if (target.className === 'yt-core-image--fill-parent-height yt-core-image--fill-parent-width yt-core-image yt-core-image--content-mode-scale-aspect-fill yt-core-image--loaded') {
+  if (
+    target.className ===
+    'yt-core-image--fill-parent-height yt-core-image--fill-parent-width yt-core-image yt-core-image--content-mode-scale-aspect-fill yt-core-image--loaded'
+  ) {
     const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
     const videoId = thumbnailAnchor.href.split('v=')[1];
 
     injectTsuriScore(videoId, thumbnailAnchor);
   }
 
-/*
+  /*
   if (
     target.tagName !== 'IMG' ||
     target.parentElement.parentElement.tagName !== 'A' ||
@@ -30,12 +33,12 @@ document.addEventListener('mouseover', event => {
   )
   */
 
-    //カーソルから外れたら、スコアを表示しなくなる
-    const element = target.parentElement.parentElement as HTMLElement;
-    const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
-    if (scoreElement) {
-      scoreElement.remove();
-    }
+  //カーソルから外れたら、スコアを表示しなくなる
+  const element = target.parentElement.parentElement as HTMLElement;
+  const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
+  if (scoreElement) {
+    scoreElement.remove();
+  }
 });
 
 const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElement) => {
