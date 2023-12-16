@@ -25,14 +25,6 @@ document.addEventListener('mouseover', event => {
     injectTsuriScore(videoId, thumbnailAnchor);
   }
 
-  /*
-  if (
-    target.tagName !== 'IMG' ||
-    target.parentElement.parentElement.tagName !== 'A' ||
-    target.parentElement.parentElement.id !== 'thumbnail'
-  )
-  */
-
   //カーソルから外れたら、スコアを表示しなくなる
   const element = target.parentElement.parentElement as HTMLElement;
   const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
