@@ -1,0 +1,105 @@
+*, *:before, *:after {
+    box-sizing: border-box; 
+  }
+  html {
+    font-size: 62.5%;
+  }
+  body {
+    color: #444;
+    background-color: black;
+  }
+  h1 {
+    font-size: 1.8rem;
+    color: white;
+  }
+  
+  .wrap {
+    width: 300px;
+    padding: 100px 0;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .wrap > *:last-child {
+    margin-bottom: 0; 
+  }
+  
+  .boder {
+    width: 70px;
+    height: 1px;
+    background-color: white;
+    position: absolute;
+    left: 150px;
+    top: 105px;
+    transform-origin: left center;
+    box-shadow: 0 -3px 20px 5px rgba(255,255,255,0.8);
+    animation: boder 4s linear 0s infinite normal none;
+  }
+  
+  .circle {
+    width: 10px;
+    height: 10px;
+    margin: 0 auto 30px;
+    border-radius: 10px;
+    background-color: LightGreen;
+    transition: 0.5s ease;
+    box-shadow: 0 0 2px 1px rgba(255,255,255,0.5);
+  }
+  
+  .circle-basic {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 30px;
+    transform:translateY(-10px);
+    border-radius: 30px;
+    border: none;
+    background-color: white;
+    z-index: 10;
+    animation: circle-flash 1s linear 0s infinite alternate none;
+  }
+  
+  .circle-puton {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  
+  .circle-infinit-1 {
+    animation: circle 3s linear 0s infinite normal none;
+  }
+  .circle-infinit-2 {
+    animation: circle 3s linear 1s infinite normal none;
+  }
+  .circle-infinit-3 {
+    animation: circle 3s linear 2s infinite normal none;
+  }
+  .circle-infinit-4 {
+    animation: circle 3s linear 3s infinite normal none;
+  }
+  
+  @keyframes circle {
+    0% {
+      transform: scale(0.1);
+    }
+    100% {
+      transform: scale(15);
+      opacity: 0;
+    }
+  }
+  @keyframes circle-flash {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes boder {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
