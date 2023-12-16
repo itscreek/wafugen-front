@@ -35,8 +35,8 @@ const injectTsuriScore = async (videoId: string) => {
 const getTsuriScore = async (videoId: string): Promise<number> => {
   const request: TsuriScoreRequestMessage = {
     type: 'TsuriScoreRequest',
-    video_id: videoId,
+    videoId: videoId,
   };
   const tsuriScore: TsuriScoreResponseMessage = await chrome.runtime.sendMessage(request);
-  return tsuriScore.tsuri_score;
+  return tsuriScore.tsuriScore;
 };
