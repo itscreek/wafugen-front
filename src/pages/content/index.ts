@@ -22,14 +22,22 @@ document.addEventListener('mouseover', event => {
   const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
   const videoId = thumbnailAnchor.href.split('v=')[1];
 
-  injectTsuriScore(videoId);
+  injectTsuriScore(videoId,thumbnailAnchor);
 });
-
+/*
 const injectTsuriScore = async (videoId: string) => {
   const tsuriScore = await getTsuriScore(videoId);
   console.log(tsuriScore);
 
-  // TODO: injecting UI
+  //injectingUI(tsuriScore);
+};
+*/
+
+const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElement) => {
+  const tsuriScore = await getTsuriScore(videoId);
+  console.log(tsuriScore);
+
+  injectingUI(tsuriScore, thumbnailAnchor);
 };
 
 const getTsuriScore = async (videoId: string): Promise<number> => {
@@ -39,4 +47,54 @@ const getTsuriScore = async (videoId: string): Promise<number> => {
   };
   const tsuriScore: TsuriScoreResponseMessage = await chrome.runtime.sendMessage(request);
   return tsuriScore.tsuriScore;
+};
+
+/*
+const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => {
+  // 既にスコアが表示されている場合は更新のみ行う
+  let scoreElement = thumbnailAnchor.querySelector('.tsuri-score');
+  if (!scoreElement) {
+    // スコア表示用の要素を作成
+    scoreElement = document.createElement('div');
+    scoreElement.classList.add('tsuri-score');
+
+    // スタイリング
+    scoreElement.style.position = 'absolute';
+    scoreElement.style.right = '5px';  // 右下に配置
+    scoreElement.style.bottom = '5px';
+    scoreElement.style.color = 'white'; // 色などのスタイルは調整可能
+    scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    scoreElement.style.padding = '2px 5px';
+    scoreElement.style.borderRadius = '4px';
+    scoreElement.style.fontSize = '12px';
+
+    // サムネイルに追加
+    thumbnailAnchor.appendChild(scoreElement);
+  }
+
+  // スコアを表示
+  scoreElement.textContent = tsuriScore.toString();
+};
+*/
+
+const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => {
+  let scoreElement = thumbnailAnchor.querySelector('.tsuri-score') as HTMLElement | null;
+  if (!scoreElement) {
+    scoreElement = document.createElement('div') as HTMLElement;
+    scoreElement.classList.add('tsuri-score');
+
+    scoreElement.style.position = 'absolute';
+    scoreElement.style.right = '5px';
+    scoreElement.style.bottom = '5px';
+    scoreElement.style.color = 'white';
+    scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    scoreElement.style.padding = '2px 5px';
+    scoreElement.style.borderRadius = '4px';
+    scoreElement.style.fontSize = '12px';
+    scoreElement.style.zIndex = '99';
+
+    thumbnailAnchor.appendChild(scoreElement);
+  }
+
+  scoreElement.textContent = tsuriScore.toString();
 };
