@@ -8,7 +8,45 @@
  *
  */
 
-import { TsuriScoreRequestMessage, TsuriScoreResponseMessage } from '@pages/message';
+import {
+  Message,
+  TsuriScoreRequestMessage,
+  TsuriScoreResponseMessage,
+  SetTimerRequestMessage,
+  FinishedTimerResponseMessage,
+} from '@pages/message';
+
+class TimerController {
+  private resolverMap: Map<string, () => void> = new Map();
+
+  setTimer(timerName: string, timeInMinutes: number): Promise<void> {
+    const request: SetTimerRequestMessage = {
+      type: 'SetTimerRequest',
+      timerName: timerName,
+      timeInMinutes: timeInMinutes,
+    };
+    chrome.runtime.sendMessage(request);
+    return new Promise(resolve => {
+      this.resolverMap.set(timerName, resolve);
+    });
+  }
+
+  async finishTimer(timerName: string) {
+    const resolver = this.resolverMap.get(timerName);
+    resolver();
+  }
+}
+
+const timerController = new TimerController();
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const message = request as Message;
+
+  if (message.type === 'FinishedTimerResponse') {
+    const finishedTimerResponse = message as FinishedTimerResponseMessage;
+    timerController.finishTimer(finishedTimerResponse.timerName);
+  }
+});
 
 // マウスオーバー時の処理
 document.addEventListener('mouseover', event => {
@@ -32,13 +70,11 @@ document.addEventListener('mouseover', event => {
 });
 
 const injectTsuriScore = async (videoId: string) => {
-  injectTsuriScoreElement();
+  await injectTsuriScoreElement();
   const tsuriScore = await getTsuriScore(videoId);
-  // const tsuriScore = 100;
   updateTsuriScoreUI(tsuriScore);
 };
 
-let displayedTsuriScore: number | undefined = undefined;
 const injectTsuriScoreElement = async () => {
   const tsuriScoreElementTagName = 'wafugen-extension-tsuri-score';
   let tsuriScoreElement = document.querySelector(tsuriScoreElementTagName);
@@ -48,15 +84,15 @@ const injectTsuriScoreElement = async () => {
 
   tsuriScoreElement = document.createElement(tsuriScoreElementTagName);
   injectingTsuriScoreUI(tsuriScoreElement);
-  getYtpInlinePreviewUiElement()?.appendChild(tsuriScoreElement);
+  (await getYtpInlinePreviewUiElement())?.appendChild(tsuriScoreElement);
 };
 
-const getYtpInlinePreviewUiElement = (): Element | undefined => {
+const getYtpInlinePreviewUiElement = async (): Promise<Element | undefined> => {
   let ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
-  // while (!ytpInlinePreviewUiElement) {
-  //   TODO: await sleep(100);
-  //   ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
-  // }
+  if (!ytpInlinePreviewUiElement) {
+    await timerController.setTimer('getYtpInlinePreviewUiElement', 0.01);
+    ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
+  }
   return ytpInlinePreviewUiElement;
 };
 

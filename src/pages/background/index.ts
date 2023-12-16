@@ -1,7 +1,15 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import 'webextension-polyfill';
-import { Message, TsuriScoreRequestMessage, TsuriScoreResponseMessage } from '@pages/message';
+import {
+  Message,
+  TsuriScoreRequestMessage,
+  TsuriScoreResponseMessage,
+  SetTimerRequestMessage,
+  FinishedTimerResponseMessage,
+} from '@pages/message';
 import { tsuriScoreAPI } from '@hooks/api-call';
+
+const ALARM_NAME_SEPARATOR_FOR_TABID = 'tabID=';
 
 reloadOnUpdate('pages/background');
 
@@ -16,6 +24,21 @@ const calcTsuriScore = async (videoId: string): Promise<number> => {
   const tsuriScore = tsuriScoreAPIResponse.items[0].tsuriScore;
   return tsuriScore;
 };
+
+const setTimer = async (name, timeInMinutes) => {
+  await chrome.alarms.create(name, { delayInMinutes: timeInMinutes });
+};
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  const timerNameFromTab = alarm.name.split(ALARM_NAME_SEPARATOR_FOR_TABID)[0];
+  const tabId = parseInt(alarm.name.split(ALARM_NAME_SEPARATOR_FOR_TABID)[1]);
+  const response: FinishedTimerResponseMessage = {
+    type: 'FinishedTimerResponse',
+    timerName: timerNameFromTab,
+    timeInMinutes: alarm.scheduledTime,
+  };
+  chrome.tabs.sendMessage(tabId, response);
+});
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const message = request as Message;
@@ -33,5 +56,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })();
     // To indicate that it will respond asynchronously
     return true;
+  }
+
+  if (message.type === 'SetTimerRequest') {
+    const setTimerRequest = message as SetTimerRequestMessage;
+    const tabId = sender.tab?.id;
+    // only allow to set timer from content script
+    if (!tabId) {
+      return;
+    }
+
+    // pass tabId to alarm name
+    const timerName = `${setTimerRequest.timerName}${ALARM_NAME_SEPARATOR_FOR_TABID}${tabId}`;
+    setTimer(timerName, setTimerRequest.timeInMinutes);
   }
 });
