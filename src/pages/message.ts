@@ -6,11 +6,11 @@ export type MessageType = 'TsuriScoreRequest' | 'TsuriScoreResponse';
 
 export interface TsuriScoreRequestMessage extends Message {
   type: 'TsuriScoreRequest';
-  video_id: string;
+  videoId: string;
 }
 
 export interface TsuriScoreResponseMessage extends Message {
   type: 'TsuriScoreResponse';
-  video_id: string;
-  tsuri_score: number;
+  videoId: string;
+  tsuriScore: number;
 }

@@ -12,8 +12,8 @@ reloadOnUpdate('pages/background');
 reloadOnUpdate('pages/content/style.scss');
 
 const calcTsuriScore = async (videoId: string): Promise<number> => {
-  const tsuriScoreAPIResponse = await tsuriScoreAPI({ video_ids: [videoId] });
-  const tsuriScore = tsuriScoreAPIResponse.items[0].tsuri_score;
+  const tsuriScoreAPIResponse = await tsuriScoreAPI({ videoId: [videoId] });
+  const tsuriScore = tsuriScoreAPIResponse.items[0].tsuriScore;
   return tsuriScore;
 };
 
@@ -23,11 +23,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (message.type === 'TsuriScoreRequest') {
     (async () => {
       const tsuriScoreRequest = message as TsuriScoreRequestMessage;
-      const tsuriScore = await calcTsuriScore(tsuriScoreRequest.video_id);
+      const tsuriScore = await calcTsuriScore(tsuriScoreRequest.videoId);
       const response: TsuriScoreResponseMessage = {
         type: 'TsuriScoreResponse',
-        video_id: tsuriScoreRequest.video_id,
-        tsuri_score: tsuriScore,
+        videoId: tsuriScoreRequest.videoId,
+        tsuriScore: tsuriScore,
       };
       sendResponse(response);
     })();
