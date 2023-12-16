@@ -39,7 +39,7 @@ class TimerController {
 
 const timerController = new TimerController();
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(request => {
   const message = request as Message;
 
   if (message.type === 'FinishedTimerResponse') {
