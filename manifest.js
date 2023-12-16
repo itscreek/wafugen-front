@@ -9,7 +9,7 @@ const manifest = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  permissions: ['storage', 'sidePanel'],
+  permissions: ['storage', 'sidePanel', 'alarms'],
   host_permissions: [
     'https://www.youtube.com/*'
   ],

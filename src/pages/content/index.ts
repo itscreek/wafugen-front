@@ -8,36 +8,92 @@
  *
  */
 
-import { TsuriScoreRequestMessage, TsuriScoreResponseMessage } from '@pages/message';
+import {
+  Message,
+  TsuriScoreRequestMessage,
+  TsuriScoreResponseMessage,
+  SetTimerRequestMessage,
+  FinishedTimerResponseMessage,
+} from '@pages/message';
+
+class TimerController {
+  private resolverMap: Map<string, () => void> = new Map();
+
+  setTimer(timerName: string, timeInMinutes: number): Promise<void> {
+    const request: SetTimerRequestMessage = {
+      type: 'SetTimerRequest',
+      timerName: timerName,
+      timeInMinutes: timeInMinutes,
+    };
+    chrome.runtime.sendMessage(request);
+    return new Promise(resolve => {
+      this.resolverMap.set(timerName, resolve);
+    });
+  }
+
+  async finishTimer(timerName: string) {
+    const resolver = this.resolverMap.get(timerName);
+    resolver();
+  }
+}
+
+const timerController = new TimerController();
+
+chrome.runtime.onMessage.addListener(request => {
+  const message = request as Message;
+
+  if (message.type === 'FinishedTimerResponse') {
+    const finishedTimerResponse = message as FinishedTimerResponseMessage;
+    timerController.finishTimer(finishedTimerResponse.timerName);
+  }
+});
 
 // マウスオーバー時の処理
 document.addEventListener('mouseover', event => {
   const target = event.target as HTMLElement;
 
-  // when target is Youtube thumbnail
-  if (
-    target.className ===
-    'yt-core-image--fill-parent-height yt-core-image--fill-parent-width yt-core-image yt-core-image--content-mode-scale-aspect-fill yt-core-image--loaded'
-  ) {
-    const thumbnailAnchor = target.parentElement.parentElement as HTMLAnchorElement;
+  const ytdRichGridMediaElement = target.closest('ytd-rich-grid-media') as HTMLElement;
+  // when Youtube preview starts
+  if (ytdRichGridMediaElement) {
+    const thumbnailAnchor = ytdRichGridMediaElement.querySelector('a#thumbnail') as HTMLAnchorElement;
     const videoId = thumbnailAnchor.href.split('v=')[1];
 
-    injectTsuriScore(videoId, thumbnailAnchor);
+    injectTsuriScore(videoId);
   }
 
   //カーソルから外れたら、スコアを表示しなくなる
-  const element = target.parentElement.parentElement as HTMLElement;
-  const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
-  if (scoreElement) {
-    scoreElement.remove();
-  }
+  // const element = target.parentElement.parentElement as HTMLElement;
+  // const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
+  // if (scoreElement) {
+  //   scoreElement.remove();
+  // }
 });
 
-const injectTsuriScore = async (videoId: string, thumbnailAnchor: HTMLAnchorElement) => {
+const injectTsuriScore = async (videoId: string) => {
+  await injectTsuriScoreElement();
   const tsuriScore = await getTsuriScore(videoId);
-  console.log(tsuriScore);
+  updateTsuriScoreUI(tsuriScore);
+};
 
-  injectingUI(tsuriScore, thumbnailAnchor);
+const injectTsuriScoreElement = async () => {
+  const tsuriScoreElementTagName = 'wafugen-extension-tsuri-score';
+  let tsuriScoreElement = document.querySelector(tsuriScoreElementTagName);
+  if (tsuriScoreElement) {
+    return;
+  }
+
+  tsuriScoreElement = document.createElement(tsuriScoreElementTagName);
+  injectingTsuriScoreUI(tsuriScoreElement);
+  (await getYtpInlinePreviewUiElement())?.appendChild(tsuriScoreElement);
+};
+
+const getYtpInlinePreviewUiElement = async (): Promise<Element | undefined> => {
+  let ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
+  if (!ytpInlinePreviewUiElement) {
+    await timerController.setTimer('getYtpInlinePreviewUiElement', 0.01);
+    ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
+  }
+  return ytpInlinePreviewUiElement;
 };
 
 const getTsuriScore = async (videoId: string): Promise<number> => {
@@ -50,26 +106,29 @@ const getTsuriScore = async (videoId: string): Promise<number> => {
 };
 
 //スコアを表示する関数
-const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => {
-  // 既にスコアが表示されている場合は更新のみ行う
-  let scoreElement = thumbnailAnchor.querySelector('.tsuri-score') as HTMLElement | null;
-  if (!scoreElement) {
-    scoreElement = document.createElement('div') as HTMLElement;
-    scoreElement.classList.add('tsuri-score');
+const injectingTsuriScoreUI = (parent: Element) => {
+  const scoreElement = document.createElement('div') as HTMLElement;
 
-    scoreElement.style.position = 'absolute';
-    scoreElement.style.right = '5px';
-    scoreElement.style.bottom = '5px';
-    scoreElement.style.color = 'white';
-    scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    scoreElement.style.padding = '2px 5px';
-    scoreElement.style.borderRadius = '4px';
-    scoreElement.style.fontSize = '12px';
-    scoreElement.style.zIndex = '99';
+  scoreElement.classList.add('tsuri-score');
 
-    // サムネイルに追加
-    thumbnailAnchor.appendChild(scoreElement);
+  scoreElement.style.position = 'absolute';
+  scoreElement.style.right = '5px';
+  scoreElement.style.bottom = '5px';
+  scoreElement.style.color = 'white';
+  scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+  scoreElement.style.padding = '2px 5px';
+  scoreElement.style.borderRadius = '4px';
+  scoreElement.style.fontSize = '12px';
+  scoreElement.style.zIndex = '99';
+
+  scoreElement.textContent = '計算中...';
+
+  parent.appendChild(scoreElement);
+};
+
+const updateTsuriScoreUI = (tsuriScore: number) => {
+  const scoreElement = document.querySelector('.tsuri-score') as HTMLElement;
+  if (scoreElement) {
+    scoreElement.textContent = tsuriScore.toString();
   }
-  // スコアを表示
-  scoreElement.textContent = tsuriScore.toString();
 };
