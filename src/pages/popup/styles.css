@@ -1,0 +1,29 @@
+.speedometer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.meter-track,
+.meter-bar {
+  fill: none;
+  stroke-width: 20%; /* 円のサイズに対して相対的なサイズに設定 */
+  transform-origin: center;
+}
+
+.meter-bar {
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 0.3s ease-out, stroke 1s ease-out;
+}
+
+.value {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  background-color: #fff; /* 背景色を追加 */
+  padding: 5px 10px;
+  border-radius: 5px; /* 角を丸くする */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 影を追加 */
+}
