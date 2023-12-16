@@ -87,9 +87,98 @@ const injectingUI = (tsuriScore: number, thumbnailAnchor: HTMLAnchorElement) => 
 };
 
 const injectTsuriReportShape = () => {
-  // TODO
+  let reportButton = document.querySelector('.tsuri-report-button') as HTMLElement | null;
+  if (!reportButton) {
+    reportButton = document.createElement('button') as HTMLElement;
+    reportButton.textContent = '通報';
+    reportButton.classList.add('tsuri-report-button');
+
+    // スタイル設定
+    reportButton.style.position = 'absolute';
+    reportButton.style.right = '40px';
+    reportButton.style.bottom = '40px';
+    reportButton.style.zIndex = '2147483647';
+
+    // ビデオプレイヤー要素を取得してボタンを追加
+    const videoContainer = document.querySelector('.html5-video-container') as HTMLElement | null;
+    document.body.appendChild(reportButton);
+  }
+
+  reportButton.style.display = 'block';
+  /*
+  if (reportButton) {
+    reportButton.style.display = 'block';
+  }
+  */
 };
 
 const removeTsuriReportShape = () => {
-  // TODO
+  const reportButton = document.querySelector('.tsuri-report-button') as HTMLElement | null;
+  if (reportButton) {
+    reportButton.style.display = 'none';
+  }
 };
+
+// マウスオーバーとマウスアウトイベントの設定
+const videoPlayer = document.querySelector('.html5-video-player') as HTMLElement | null;
+videoPlayer?.addEventListener('mouseover', injectTsuriReportShape);
+videoPlayer?.addEventListener('mouseout', removeTsuriReportShape);
+
+
+/*
+const injectTsuriReportShape = () => {
+  let reportButton = document.querySelector('.tsuri-report-button') as HTMLElement | null;
+  if (!reportButton) {
+    reportButton = document.createElement('button') as HTMLElement;
+    reportButton.textContent = '通報';
+    reportButton.classList.add('tsuri-report-button');
+
+    // スタイル設定
+    reportButton.style.position = 'absolute';
+    reportButton.style.right = '20px';
+    reportButton.style.bottom = '20px';
+    reportButton.style.zIndex = '1000';
+
+    const videoPlayer = document.querySelector('.html5-video-player') as HTMLElement | null;
+    videoPlayer?.appendChild(reportButton);
+  }
+  if (reportButton) {
+    reportButton.style.display = 'block';
+  }
+};
+
+const removeTsuriReportShape = () => {
+  const reportButton = document.querySelector('.tsuri-report-button') as HTMLElement | null;
+  if (reportButton) {
+    reportButton.style.display = 'none';
+  }
+};
+*/
+
+
+/*
+const injectTsuriReportShape = () => {
+  let reportButton = document.querySelector('.tsuri-report-button');
+  if (!reportButton) {
+    reportButton = document.createElement('button') as HTMLElement;
+    reportButton.textContent = '通報';
+    reportButton.classList.add('tsuri-report-button');
+
+    reportButton.style.position = 'absolute';
+    reportButton.style.right = '20px';
+    reportButton.style.bottom = '20px';
+    reportButton.style.zIndex = '1000';
+
+    const videoPlayer = document.querySelector('.html5-video-player');
+    videoPlayer.appendChild(reportButton);
+  }
+  reportButton.style.display = 'block';
+};
+
+const removeTsuriReportShape = () => {
+  const reportButton = document.querySelector('.tsuri-report-button');
+  if (reportButton) {
+    reportButton.style.display = 'none';
+  }
+};
+*/
