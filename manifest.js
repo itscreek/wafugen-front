@@ -37,12 +37,13 @@ const manifest = {
       js: ['src/pages/content/index.js'],
       // KEY for cache invalidation
       css: ['assets/css/contentStyle<KEY>.chunk.css'],
+      run_at: 'document_end'
     },
   ],
   devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
-      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png', 'src/pages/tsuriScoreUi/index.js'],
+      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png', 'src/pages/tsuriScoreUi/index.js', 'src/pages/tsuriReportUi/index.js'],
       matches: ['*://*/*'],
     },
   ],
