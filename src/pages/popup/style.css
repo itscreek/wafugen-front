@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+#app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px; /* 高さを調整 */
+}
+
+.dot {
+  position: absolute;
+  width: 5px; /* 点の大きさ */
+  height: 5px;
+  border-radius: 50%;
+  background-color: black;
+}
