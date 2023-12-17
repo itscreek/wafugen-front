@@ -57,6 +57,8 @@ document.addEventListener('mouseover', async event => {
   if (ytdRichGridMediaElement) {
     injectTsuriScoreElement();
 
+    // wait for a little bit not to call API too much
+    await timerController.setTimer('waitAPICall', 0.01);
     const thumbnailAnchor = ytdRichGridMediaElement.querySelector('a#thumbnail') as HTMLAnchorElement;
     const videoId = thumbnailAnchor.href.split('v=')[1];
     const tsuriScore = await getTsuriScore(videoId);
