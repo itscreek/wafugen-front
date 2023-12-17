@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener(request => {
 });
 
 // マウスオーバー時の処理
-document.addEventListener('mouseover', event => {
+document.addEventListener('mouseover', async event => {
   const target = event.target as HTMLElement;
 
   const ytdRichGridMediaElement = target.closest('ytd-rich-grid-media') as HTMLElement;
@@ -59,7 +59,13 @@ document.addEventListener('mouseover', event => {
 
     const thumbnailAnchor = ytdRichGridMediaElement.querySelector('a#thumbnail') as HTMLAnchorElement;
     const videoId = thumbnailAnchor.href.split('v=')[1];
-    updateTsuriScoreComponent(videoId);
+    const tsuriScore = await getTsuriScore(videoId);
+
+    // notify tsuriScore to React component
+    const tsuriScoreAvailableEvent = new CustomEvent('tsuriScoreAvailable', {
+      detail: { videoId: videoId, tsuriScore: tsuriScore },
+    });
+    document.dispatchEvent(tsuriScoreAvailableEvent);
   }
 });
 
@@ -106,8 +112,6 @@ const injectTsuriScoreComponent = (parent: Element) => {
   parent.appendChild(divElement);
   parent.appendChild(srcElement);
 };
-
-const updateTsuriScoreComponent = (videoId: string) => {};
 
 const getTsuriScore = async (videoId: string): Promise<number> => {
   const request: TsuriScoreRequestMessage = {
