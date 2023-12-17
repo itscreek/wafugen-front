@@ -55,26 +55,16 @@ document.addEventListener('mouseover', event => {
   const ytdRichGridMediaElement = target.closest('ytd-rich-grid-media') as HTMLElement;
   // when Youtube preview starts
   if (ytdRichGridMediaElement) {
+    injectTsuriScoreElement();
+
     const thumbnailAnchor = ytdRichGridMediaElement.querySelector('a#thumbnail') as HTMLAnchorElement;
     const videoId = thumbnailAnchor.href.split('v=')[1];
-
-    injectTsuriScore(videoId);
+    updateTsuriScoreComponent(videoId);
   }
-
-  //カーソルから外れたら、スコアを表示しなくなる
-  // const element = target.parentElement.parentElement as HTMLElement;
-  // const scoreElement = element.querySelector('.tsuri-score') as HTMLElement | null;
-  // if (scoreElement) {
-  //   scoreElement.remove();
-  // }
 });
 
-const injectTsuriScore = async (videoId: string) => {
-  await injectTsuriScoreElement();
-  const tsuriScore = await getTsuriScore(videoId);
-  updateTsuriScoreUI(tsuriScore);
-};
-
+// injects <wafugen-extension-tsuri-score> element to the page
+// this function injects only once
 const injectTsuriScoreElement = async () => {
   const tsuriScoreElementTagName = 'wafugen-extension-tsuri-score';
   let tsuriScoreElement = document.querySelector(tsuriScoreElementTagName);
@@ -83,18 +73,41 @@ const injectTsuriScoreElement = async () => {
   }
 
   tsuriScoreElement = document.createElement(tsuriScoreElementTagName);
-  injectingTsuriScoreUI(tsuriScoreElement);
+  injectTsuriScoreComponent(tsuriScoreElement);
   (await getYtpInlinePreviewUiElement())?.appendChild(tsuriScoreElement);
 };
 
 const getYtpInlinePreviewUiElement = async (): Promise<Element | undefined> => {
   let ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
   if (!ytpInlinePreviewUiElement) {
-    await timerController.setTimer('getYtpInlinePreviewUiElement', 0.01);
+    await timerController.setTimer('getYtpInlinePreviewUiElement', 0.03);
     ytpInlinePreviewUiElement = document.querySelector('.ytp-inline-preview-ui');
   }
   return ytpInlinePreviewUiElement;
 };
+
+// hooks for React components
+const injectTsuriScoreComponent = (parent: Element) => {
+  const divElement = document.createElement('div');
+  divElement.id = 'tsuri-score-ui-container';
+  divElement.style.zIndex = '2147483647';
+
+  // TODO: configure
+  divElement.style.position = 'absolute';
+  divElement.style.right = '5px';
+  divElement.style.bottom = '5px';
+  divElement.style.width = '50px';
+  divElement.style.height = '50px';
+
+  const srcElement = document.createElement('script');
+  srcElement.src = chrome.runtime.getURL('src/pages/tsuriScoreUi/index.js');
+  srcElement.type = 'module';
+
+  parent.appendChild(divElement);
+  parent.appendChild(srcElement);
+};
+
+const updateTsuriScoreComponent = (videoId: string) => {};
 
 const getTsuriScore = async (videoId: string): Promise<number> => {
   const request: TsuriScoreRequestMessage = {
@@ -103,32 +116,4 @@ const getTsuriScore = async (videoId: string): Promise<number> => {
   };
   const tsuriScore: TsuriScoreResponseMessage = await chrome.runtime.sendMessage(request);
   return tsuriScore.tsuriScore;
-};
-
-//スコアを表示する関数
-const injectingTsuriScoreUI = (parent: Element) => {
-  const scoreElement = document.createElement('div') as HTMLElement;
-
-  scoreElement.classList.add('tsuri-score');
-
-  scoreElement.style.position = 'absolute';
-  scoreElement.style.right = '5px';
-  scoreElement.style.bottom = '5px';
-  scoreElement.style.color = 'white';
-  scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-  scoreElement.style.padding = '2px 5px';
-  scoreElement.style.borderRadius = '4px';
-  scoreElement.style.fontSize = '12px';
-  scoreElement.style.zIndex = '99';
-
-  scoreElement.textContent = '計算中...';
-
-  parent.appendChild(scoreElement);
-};
-
-const updateTsuriScoreUI = (tsuriScore: number) => {
-  const scoreElement = document.querySelector('.tsuri-score') as HTMLElement;
-  if (scoreElement) {
-    scoreElement.textContent = tsuriScore.toString();
-  }
 };
