@@ -1,15 +1,9 @@
 import { createRoot } from 'react-dom/client';
+import { Logo } from '@pages/content/ui/logo'; // Logo.tsxからLogoコンポーネントをインポート
 
 const App = () => {
-  const buttonStyle = {
-    backgroundColor: "#abedd8",
-    border: "none",
-    padding: "8px",
-    borderRadius: "8px"
-  };
-  return (
-    <a style={buttonStyle}>PUSH！</a>
-  );
+  const logoSize = 30; // Logoのサイズを設定
+  return <Logo size={logoSize} />;
 };
 
 const container = document.getElementById('tsuri-report-ui-container');
