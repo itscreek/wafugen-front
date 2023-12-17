@@ -10,6 +10,7 @@ type LogoBaseProps = {
     onMouseEnter?: () => void;  // マウスがエレメント上に入った時のイベントハンドラを追加
     onMouseLeave?: () => void;  // マウスがエレメントから離れた時のイベントハンドラを追加
 }
+
 const LogoBase: React.FC<LogoBaseProps> = ({ size, color1 = "#000", color2 = "#000", color4 = "#00A67E", children,onMouseEnter,onMouseLeave}) => {
     const ratio = 0.1;
     const delta = size / 8;
@@ -76,6 +77,7 @@ const Logo: React.FC<LogoProps> = ({ size, color3 = "#FF0000" }) => {
         </LogoBase>
     )
 }
+
 
 const animations = {
     rotateTick: keyframes`
