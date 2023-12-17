@@ -55,10 +55,10 @@ const injectTsuriReportElement = async () => {
 
   // TODO: configure
   divElement.style.position = 'absolute';
-  divElement.style.right = '5px';
-  divElement.style.bottom = '5px';
-  divElement.style.width = '50px';
-  divElement.style.height = '50px';
+  divElement.style.right = '0px';
+  divElement.style.bottom = '100px';
+  divElement.style.width = '20px';
+  divElement.style.height = '20px';
 
   const srcElement = document.createElement('script');
   srcElement.src = chrome.runtime.getURL('src/pages/tsuriReportUi/index.js');
