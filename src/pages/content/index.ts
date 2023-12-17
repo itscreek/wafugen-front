@@ -39,6 +39,37 @@ class TimerController {
 
 const timerController = new TimerController();
 
+const injectTsuriReportElement = async () => {
+  const tsuriReportElementTagName = 'wafugen-extension-tsuri-report';
+  const tsuriReportElement = document.createElement(tsuriReportElementTagName);
+  let ytpChromeControlsElement = document.querySelector('.ytp-chrome-controls');
+  if (!ytpChromeControlsElement) {
+    await timerController.setTimer('injectTsuriReportElement', 0.05);
+    ytpChromeControlsElement = document.querySelector('.ytp-chrome-controls');
+  }
+  ytpChromeControlsElement.appendChild(tsuriReportElement);
+
+  const divElement = document.createElement('div');
+  divElement.id = 'tsuri-report-ui-container';
+  divElement.style.zIndex = '2147483647';
+
+  // TODO: configure
+  divElement.style.position = 'absolute';
+  divElement.style.right = '5px';
+  divElement.style.bottom = '5px';
+  divElement.style.width = '50px';
+  divElement.style.height = '50px';
+
+  const srcElement = document.createElement('script');
+  srcElement.src = chrome.runtime.getURL('src/pages/tsuriReportUi/index.js');
+  srcElement.type = 'module';
+
+  tsuriReportElement.appendChild(divElement);
+  tsuriReportElement.appendChild(srcElement);
+};
+
+injectTsuriReportElement();
+
 chrome.runtime.onMessage.addListener(request => {
   const message = request as Message;
 
