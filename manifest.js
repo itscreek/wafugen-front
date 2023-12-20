@@ -9,34 +9,21 @@ const manifest = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  permissions: ['storage', 'sidePanel', 'alarms'],
+  permissions: ['alarms'],
   host_permissions: [
     'https://www.youtube.com/*'
   ],
-  side_panel: {
-    default_path: 'src/pages/sidepanel/index.html',
-  },
-  options_page: 'src/pages/options/index.html',
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',
-  },
-  action: {
-    default_popup: 'src/pages/popup/index.html',
-    default_icon: 'icon-34.png',
-  },
-  chrome_url_overrides: {
-    newtab: 'src/pages/newtab/index.html',
   },
   icons: {
     128: 'icon-128.png',
   },
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      matches: ['https://www.youtube.com/*'],
       js: ['src/pages/content/index.js'],
-      // KEY for cache invalidation
-      css: ['assets/css/contentStyle<KEY>.chunk.css'],
       run_at: 'document_end'
     },
   ],

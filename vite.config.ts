@@ -31,9 +31,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    makeManifest({
-      contentScriptCssKey: regenerateCacheInvalidationKey(),
-    }),
+    makeManifest({}),
     react(),
     customDynamicImport(),
     addHmr({ background: enableHmrInBackgroundScript, view: true }),
@@ -50,15 +48,8 @@ export default defineConfig({
     emptyOutDir: !isDev,
     rollupOptions: {
       input: {
-        devtools: resolve(pagesDir, 'devtools', 'index.html'),
-        panel: resolve(pagesDir, 'panel', 'index.html'),
         content: resolve(pagesDir, 'content', 'index.ts'),
         background: resolve(pagesDir, 'background', 'index.ts'),
-        contentStyle: resolve(pagesDir, 'content', 'style.scss'),
-        popup: resolve(pagesDir, 'popup', 'index.html'),
-        newtab: resolve(pagesDir, 'newtab', 'index.html'),
-        options: resolve(pagesDir, 'options', 'index.html'),
-        sidepanel: resolve(pagesDir, 'sidepanel', 'index.html'),
         tsuriScoreUi: resolve(pagesDir, 'content/ui', 'tsuri-score-ui.tsx'),
         tsuriReportUi: resolve(pagesDir, 'content/ui', 'tsuri-report-ui.tsx'),
       },
