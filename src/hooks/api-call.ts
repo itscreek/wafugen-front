@@ -12,8 +12,8 @@ export interface TsuriScoreAPIResponse {
   items: TsuriScoreItem[];
 }
 
-const LOCAL_API_URL = 'http://localhost:40000/v1';
-const API_URL = 'http://wafugen-hacks-api.azurewebsites.net/v1';
+const API_URL = 'http://localhost:40000/v1';
+// const RELEASE_API_URL = 'http://wafugen-hacks-api.azurewebsites.net/v1';
 
 // API call function
 export const tsuriScoreAPI = async (input: TsuriScoreAPIRequest): Promise<TsuriScoreAPIResponse> => {
